@@ -8,7 +8,7 @@ import { RequestBoard } from "@/components/requests/RequestBoard";
 import { RequestForm } from "@/components/requests/RequestForm";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/hooks/useAuth";
-import type { SupportRequestWithDetails } from "@/types/database";
+import type { SupportRequestWithDetails, RequestStatus } from "@/types/database";
 import { Plus, X } from "lucide-react";
 import { hasMinRole } from "@/lib/utils/roles";
 import type { UserRole } from "@/lib/utils/roles";
@@ -42,7 +42,7 @@ export default function RequestsPage() {
     fetchRequests();
   }, [fetchRequests]);
 
-  const handleStatusChange = async (requestId: string, newStatus: string) => {
+  const handleStatusChange = async (requestId: string, newStatus: RequestStatus) => {
     const updates: Record<string, unknown> = { status: newStatus };
     if (newStatus === "completed") {
       updates.resolved_at = new Date().toISOString();
