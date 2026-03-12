@@ -192,7 +192,7 @@ export function ImportPreview({ result, onConfirm, onCancel }: ImportPreviewProp
                       <td className="px-3 py-2 font-mono text-xs">{a.member_initials}</td>
                       <td className="px-3 py-2 text-xs">{a.programs.join(", ")}</td>
                       <td className="px-3 py-2">
-                        <WorkloadBadge workload={a.workload} />
+                        <WorkloadBadge workload={a.workload === "unknown" ? "none" : a.workload} />
                       </td>
                       <td className="px-3 py-2 text-xs capitalize">{a.status.replace("_", " ")}</td>
                     </tr>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { SupportRequestWithDetails } from "@/types/database";
+import type { SupportRequestWithDetails, RequestStatus } from "@/types/database";
 import {
   Clock,
   Eye,
@@ -33,7 +33,7 @@ const PRIORITY_ICON: Record<string, { icon: typeof ArrowUp; color: string }> = {
 
 interface RequestBoardProps {
   requests: SupportRequestWithDetails[];
-  onStatusChange: (requestId: string, newStatus: string) => void;
+  onStatusChange: (requestId: string, newStatus: RequestStatus) => void;
   onAssign: (requestId: string, assigneeId: string) => void;
   canManage: boolean;
 }
@@ -62,9 +62,9 @@ export function RequestBoard({
       month: "short",
     });
 
-  const nextStatus = (current: string): string | null => {
-    const order = ["submitted", "reviewed", "assigned", "in_progress", "completed"];
-    const idx = order.indexOf(current);
+  const nextStatus = (current: string): RequestStatus | null => {
+    const order: RequestStatus[] = ["submitted", "reviewed", "assigned", "in_progress", "completed"];
+    const idx = order.indexOf(current as RequestStatus);
     return idx >= 0 && idx < order.length - 1 ? order[idx + 1] : null;
   };
 
@@ -104,10 +104,11 @@ export function RequestBoard({
                       <h4 className="text-sm font-medium text-gray-900 line-clamp-2">
                         {req.title}
                       </h4>
-                      <PriorityIcon
-                        className={`h-4 w-4 shrink-0 ${priority.color}`}
-                        title={req.priority}
-                      />
+                      <span title={req.priority}>
+                        <PriorityIcon
+                          className={`h-4 w-4 shrink-0 ${priority.color}`}
+                        />
+                      </span>
                     </div>
 
                     {req.description && (

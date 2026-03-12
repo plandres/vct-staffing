@@ -25,19 +25,29 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh session — MUST call getUser() not getSession()
+  // Refresh session - MUST call getUser() not getSession()
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users to login (except auth routes)
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
+  const pathname = request.nextUrl.pathname;
+
+  // Public routes that don't require auth
+  const isPublicRoute =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/auth");
+
+  // Redirect unauthenticated users to login
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // Redirect authenticated users away from login page (but not reset-password)
+  if (user && pathname === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 

@@ -148,18 +148,244 @@ export interface SupportRequestWithDetails extends SupportRequest {
 }
 
 // Supabase Database type (for generic client)
+// Compatible with @supabase/supabase-js v2.99+
 export interface Database {
   public: {
     Tables: {
-      profiles: { Row: Profile; Insert: Partial<Profile> & { id: string; email: string; full_name: string }; Update: Partial<Profile> };
-      funds: { Row: Fund; Insert: Partial<Fund> & { name: string }; Update: Partial<Fund> };
-      portfolio_companies: { Row: PortfolioCompany; Insert: Partial<PortfolioCompany> & { name: string }; Update: Partial<PortfolioCompany> };
-      program_categories: { Row: ProgramCategory; Insert: Partial<ProgramCategory> & { name: string }; Update: Partial<ProgramCategory> };
-      staffing_assignments: { Row: StaffingAssignment; Insert: Partial<StaffingAssignment> & { member_id: string; company_id: string; program_id: string }; Update: Partial<StaffingAssignment> };
-      support_requests: { Row: SupportRequest; Insert: Partial<SupportRequest> & { requester_id: string; title: string }; Update: Partial<SupportRequest> };
-      sop_assignments: { Row: SopAssignment; Insert: Partial<SopAssignment> & { sop_id: string; company_id: string }; Update: Partial<SopAssignment> };
-      rdqm_imports: { Row: RdqmImport; Insert: Partial<RdqmImport> & { file_name: string; file_type: ImportFileType }; Update: Partial<RdqmImport> };
-      activity_log: { Row: ActivityLog; Insert: Partial<ActivityLog> & { action: string }; Update: Partial<ActivityLog> };
+      profiles: {
+        Row: Profile;
+        Insert: {
+          id: string;
+          email: string;
+          full_name: string;
+          initials?: string | null;
+          role?: UserRole;
+          specialties?: string[];
+          avatar_url?: string | null;
+          phone?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string;
+          initials?: string | null;
+          role?: UserRole;
+          specialties?: string[];
+          avatar_url?: string | null;
+          phone?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      funds: {
+        Row: Fund;
+        Insert: {
+          id?: string;
+          name: string;
+          display_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          display_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      portfolio_companies: {
+        Row: PortfolioCompany;
+        Insert: {
+          id?: string;
+          name: string;
+          fund_id?: string | null;
+          sector?: string | null;
+          geography?: string | null;
+          status?: CompanyStatus;
+          deal_partner?: string | null;
+          deal_team?: string[];
+          strategic_priorities?: StrategicPriority[];
+          kpis?: Kpi[];
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          fund_id?: string | null;
+          sector?: string | null;
+          geography?: string | null;
+          status?: CompanyStatus;
+          deal_partner?: string | null;
+          deal_team?: string[];
+          strategic_priorities?: StrategicPriority[];
+          kpis?: Kpi[];
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      program_categories: {
+        Row: ProgramCategory;
+        Insert: {
+          id?: string;
+          name: string;
+          type?: ProgramType;
+          display_order?: number;
+          color?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          type?: ProgramType;
+          display_order?: number;
+          color?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      staffing_assignments: {
+        Row: StaffingAssignment;
+        Insert: {
+          id?: string;
+          member_id: string;
+          company_id: string;
+          program_id: string;
+          workload?: WorkloadLevel;
+          status?: AssignmentStatus;
+          start_date?: string | null;
+          end_date?: string | null;
+          objectives?: string | null;
+          external_resources?: string | null;
+          notes?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          member_id?: string;
+          company_id?: string;
+          program_id?: string;
+          workload?: WorkloadLevel;
+          status?: AssignmentStatus;
+          start_date?: string | null;
+          end_date?: string | null;
+          objectives?: string | null;
+          external_resources?: string | null;
+          notes?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      support_requests: {
+        Row: SupportRequest;
+        Insert: {
+          id?: string;
+          requester_id: string;
+          company_id?: string | null;
+          title: string;
+          description?: string | null;
+          priority?: RequestPriority;
+          status?: RequestStatus;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          requester_id?: string;
+          company_id?: string | null;
+          title?: string;
+          description?: string | null;
+          priority?: RequestPriority;
+          status?: RequestStatus;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      sop_assignments: {
+        Row: SopAssignment;
+        Insert: {
+          id?: string;
+          sop_id: string;
+          company_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          sop_id?: string;
+          company_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      rdqm_imports: {
+        Row: RdqmImport;
+        Insert: {
+          id?: string;
+          file_name: string;
+          file_path?: string | null;
+          file_type: ImportFileType;
+          imported_by?: string | null;
+          status?: ImportStatus;
+          changes_summary?: Record<string, number> | null;
+          error_log?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          file_name?: string;
+          file_path?: string | null;
+          file_type?: ImportFileType;
+          imported_by?: string | null;
+          status?: ImportStatus;
+          changes_summary?: Record<string, number> | null;
+          error_log?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      activity_log: {
+        Row: ActivityLog;
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          action: string;
+          entity_type?: string | null;
+          entity_id?: string | null;
+          changes?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          action?: string;
+          entity_type?: string | null;
+          entity_id?: string | null;
+          changes?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    Views: {};
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    Functions: {};
   };
 }
