@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #5)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #6)
 
 ---
 
@@ -81,6 +81,7 @@
 - [x] Édition de profil utilisateur (modale depuis la sidebar : nom, initiales, téléphone, spécialités)
 - [x] Priorités stratégiques & KPIs éditables dans la fiche société (ajout, suppression, toggle statut)
 - [x] Recherche globale (Ctrl+K) : sociétés, membres, programmes avec navigation clavier
+- [x] Gestion des sociétés du portefeuille dans Admin > Config (ajout, renommage inline, changement fonds/statut, suppression)
 
 ### À faire
 
