@@ -25,8 +25,8 @@
 
 ### À faire
 
-- [ ] **Exécuter les migrations sur la DB de prod** — Utiliser le **Supabase MCP Server** (`https://mcp.supabase.com/mcp?project_ref=nshsmbzhrhfjauayzjgy`) pour exécuter `supabase/full_setup.sql`. Nécessite la config MCP dans les settings Claude Code (voir `CLAUDE.md`). Ne jamais demander à l'utilisateur de le faire manuellement.
-- [ ] **Exécuter `bootstrap_admin`** après la première inscription — via MCP SQL
+- [ ] **⚠️ PRIORITÉ #1 — Exécuter les migrations sur la DB de prod** — Le fichier `supabase/full_setup.sql` (686 lignes, 9 tables, RLS, seed data) doit être exécuté sur la DB. Méthode : utiliser le Supabase MCP Server ou, si MCP indisponible, demander la `SUPABASE_SERVICE_ROLE_KEY` à l'utilisateur et exécuter via `curl` sur l'API REST Supabase (`/rest/v1/rpc` ou `/pg`). **Ne jamais demander à l'utilisateur de copier-coller le SQL manuellement.**
+- [ ] **⚠️ PRIORITÉ #2 — Exécuter `bootstrap_admin()`** après la première inscription utilisateur — via MCP SQL ou API REST avec service_role key
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [ ] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)

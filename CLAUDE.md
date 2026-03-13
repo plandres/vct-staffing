@@ -79,7 +79,7 @@ Required in `.env.local` (local) and Vercel (production):
 - Pour exécuter des migrations SQL sur la DB de prod : **demander la service_role key à l'utilisateur**, puis exécuter via `psql` ou l'API Supabase.
 - **Ne jamais demander à l'utilisateur d'exécuter le SQL manuellement** (copier-coller dans le dashboard). C'est à Claude de le faire.
 - Le fichier combiné de setup est `supabase/full_setup.sql`. Les migrations individuelles sont dans `supabase/migrations/`.
-- **Réseau sandbox** : Les connexions sortantes vers `*.supabase.co` sont bloquées (`403 host_not_allowed`). Pour contourner ce blocage, utiliser le **Supabase MCP Server** (voir section ci-dessous).
+- **Réseau sandbox** : Les connexions sortantes vers `*.supabase.co` sont bloquées (`403 host_not_allowed`). Solutions : (1) **Supabase MCP Server** (voir section ci-dessous) — configuré + authentifié mais les outils n'apparaissent pas encore dans la session. (2) **Fallback** : demander la `SUPABASE_SERVICE_ROLE_KEY` à l'utilisateur et tenter `curl` vers l'API REST. À retester à chaque nouvelle session.
 
 ## Supabase MCP Server
 
