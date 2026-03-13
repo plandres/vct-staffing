@@ -743,7 +743,7 @@ END;
 $$;
 
 CREATE TRIGGER company_activity_log
-  AFTER INSERT OR UPDATE OR DELETE ON public.companies
+  AFTER INSERT OR UPDATE OR DELETE ON public.portfolio_companies
   FOR EACH ROW
   EXECUTE FUNCTION public.log_company_change();
 
@@ -822,6 +822,6 @@ END;
 $$;
 
 CREATE TRIGGER request_activity_log
-  AFTER INSERT OR UPDATE OR DELETE ON public.requests
+  AFTER INSERT OR UPDATE OR DELETE ON public.support_requests
   FOR EACH ROW
   EXECUTE FUNCTION public.log_request_change();

@@ -1,10 +1,10 @@
 -- ============================================================
 -- MIGRATION 009 — Extend activity logging
--- Tables: companies, profiles, requests
+-- Tables: portfolio_companies, profiles, support_requests
 -- ============================================================
 
 -- -------------------------------------------------------
--- companies: log name/fund/status changes + add/delete
+-- portfolio_companies: log name/fund/status changes + add/delete
 -- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.log_company_change()
 RETURNS TRIGGER
@@ -48,7 +48,7 @@ END;
 $$;
 
 CREATE TRIGGER company_activity_log
-  AFTER INSERT OR UPDATE OR DELETE ON public.companies
+  AFTER INSERT OR UPDATE OR DELETE ON public.portfolio_companies
   FOR EACH ROW
   EXECUTE FUNCTION public.log_company_change();
 
@@ -92,7 +92,7 @@ CREATE TRIGGER profile_activity_log
 
 
 -- -------------------------------------------------------
--- requests: log creation and status changes
+-- support_requests: log creation and status changes
 -- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.log_request_change()
 RETURNS TRIGGER
@@ -141,6 +141,6 @@ END;
 $$;
 
 CREATE TRIGGER request_activity_log
-  AFTER INSERT OR UPDATE OR DELETE ON public.requests
+  AFTER INSERT OR UPDATE OR DELETE ON public.support_requests
   FOR EACH ROW
   EXECUTE FUNCTION public.log_request_change();
