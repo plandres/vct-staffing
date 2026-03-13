@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #3)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #4)
 
 ---
 
@@ -28,7 +28,7 @@
 - [ ] **⚠️ PRIORITÉ #1 — Exécuter les migrations sur la DB de prod** — Le fichier `supabase/full_setup.sql` (686 lignes, 9 tables, RLS, seed data) doit être exécuté sur la DB. Méthode : utiliser le Supabase MCP Server ou, si MCP indisponible, demander la `SUPABASE_SERVICE_ROLE_KEY` à l'utilisateur et exécuter via `curl` sur l'API REST Supabase (`/rest/v1/rpc` ou `/pg`). **Ne jamais demander à l'utilisateur de copier-coller le SQL manuellement.**
 - [ ] **⚠️ PRIORITÉ #2 — Exécuter `bootstrap_admin()`** après la première inscription utilisateur — via MCP SQL ou API REST avec service_role key
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
-- [ ] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
+- [x] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
 - [ ] Créer des templates email personnalisés (branding Seven2)
 - [ ] Étendre l'activity logging au-delà de `staffing_assignments` (companies, profiles, etc.)
@@ -52,10 +52,10 @@
 
 ### À faire
 
-- [ ] Créer `vercel.json` (exclure `parser/`, `supabase/` du déploiement)
+- [x] Créer `vercel.json` (framework Next.js, build/install commands)
+- [x] Créer `.vercelignore` pour exclure `parser/`, `supabase/`, `TODO_SETUP.md`, `project.md`
 - [ ] Ajouter les variables d'env sur le Dashboard Vercel (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
 - [ ] Configurer les variables Azure OAuth dans Supabase Dashboard (prod)
-- [ ] Créer `.vercelignore` pour exclure `parser/`, `supabase/`
 
 ---
 
