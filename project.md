@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #6)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #7)
 
 ---
 
@@ -17,8 +17,10 @@
 - [x] Seed data : 3 fonds, 26 sociétés, 16 catégories de programmes
 - [x] 3 clients Supabase (client, server, middleware) avec placeholder fallbacks
 - [x] Auth middleware SSR avec `getUser()` + routing public/privé
+- [x] `useAuth` optimisé : `getSession()` au lieu de `getUser()` pour le chargement initial (perf)
 - [x] Auth flow : Microsoft OAuth (Azure) + email/password + reset password + callback
 - [x] Realtime : subscription sur `staffing_assignments`
+- [x] Fix re-render infini dans `useStaffing` / `useCompanies` (dépendances `useCallback` stabilisées)
 - [x] Types TypeScript complets (`src/types/database.ts`)
 - [x] `config.toml` local avec Azure OAuth, Studio, Realtime
 - [x] `.env.local` avec credentials dev
@@ -26,6 +28,7 @@
 ### À faire
 
 - [x] **Migrations exécutées sur la DB de prod** — 9 tables, 10 fonctions, 27 policies RLS, 22 index, 7 triggers, seed data (3 fonds, 16 programmes) — via MCP Supabase
+- [x] Migration 008 : policies RLS granulaires sur `funds` et `program_categories` (INSERT/UPDATE/DELETE séparés avec `WITH CHECK`)
 - [x] **`bootstrap_admin()` exécuté** — paul-louis.andres@seven2.eu promu owner
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [x] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
