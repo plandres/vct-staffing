@@ -60,7 +60,7 @@
 - [x] Créer `vercel.json` (framework Next.js, build/install commands)
 - [x] Créer `.vercelignore` pour exclure `parser/`, `supabase/`, `TODO_SETUP.md`, `project.md`
 - [x] Ajouter les variables d'env sur le Dashboard Vercel (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-- [ ] Configurer les variables Azure OAuth dans Supabase Dashboard (prod)
+- [x] Configurer les variables Azure OAuth dans Supabase Dashboard (prod)
 
 ---
 
