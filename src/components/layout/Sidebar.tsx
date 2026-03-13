@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,9 +12,11 @@ import {
   Settings,
   Upload,
   Users,
+  Pencil,
 } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { hasMinRole } from "@/lib/utils/roles";
+import { ProfileModal } from "@/components/layout/ProfileModal";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, minRole: "viewer" as const },
@@ -32,6 +35,7 @@ const ADMIN_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const { profile, role } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-card">
@@ -103,7 +107,10 @@ export function Sidebar() {
 
       {/* User info */}
       <div className="border-t border-border p-4">
-        <div className="flex items-center gap-3">
+        <button
+          onClick={() => setProfileOpen(true)}
+          className="flex w-full items-center gap-3 rounded-md p-1 text-left hover:bg-accent transition-colors group"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
             {profile?.initials ?? "?"}
           </div>
@@ -115,8 +122,21 @@ export function Sidebar() {
               {profile?.role?.replace("_", " ").toUpperCase() ?? ""}
             </p>
           </div>
-        </div>
+          <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+        </button>
       </div>
+
+      {profile && (
+        <ProfileModal
+          profile={profile}
+          open={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          onSaved={() => {
+            // Profile will be refreshed via auth state on next page load
+            setProfileOpen(false);
+          }}
+        />
+      )}
     </aside>
   );
 }

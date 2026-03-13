@@ -2,6 +2,7 @@
 
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { SearchBar } from "@/components/layout/SearchBar";
 
 interface HeaderProps {
   title: string;
@@ -21,6 +22,7 @@ export function Header({ title, description, actions }: HeaderProps) {
         )}
       </div>
       <div className="flex items-center gap-3">
+        <SearchBar />
         {actions}
         <button
           onClick={signOut}

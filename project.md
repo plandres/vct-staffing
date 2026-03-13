@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #2)
 
 ---
 
@@ -74,14 +74,14 @@
 - [x] AuthGuard avec contrôle d'accès par rôle
 - [x] Système de rôles à 6 niveaux (owner→viewer)
 - [x] UI en français
+- [x] Système de toasts/notifications (`ToastProvider` + `useToast`)
+- [x] Drag & drop sur la config fonds/programmes (HTML5 natif, sauvegarde `display_order`)
+- [x] Édition de profil utilisateur (modale depuis la sidebar : nom, initiales, téléphone, spécialités)
+- [x] Priorités stratégiques & KPIs éditables dans la fiche société (ajout, suppression, toggle statut)
+- [x] Recherche globale (Ctrl+K) : sociétés, membres, programmes avec navigation clavier
 
 ### À faire
 
-- [ ] Drag & drop sur la config fonds/programmes (icônes présentes, pas fonctionnel)
-- [ ] Édition de profil par l'utilisateur (initials, spécialités, avatar, etc.)
-- [ ] Système de notifications/toasts
-- [ ] Exploiter les champs stratégiques (priorités, KPIs) dans l'UI société
-- [ ] Recherche full-text (filtrage basique uniquement aujourd'hui)
 - [ ] Opérations en masse (bulk import/export d'assignments)
 - [ ] Tests automatisés (unitaires, intégration)
 
