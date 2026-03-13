@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #11)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13
 
 ---
 
@@ -59,7 +59,7 @@
 
 - [x] Créer `vercel.json` (framework Next.js, build/install commands)
 - [x] Créer `.vercelignore` pour exclure `parser/`, `supabase/`, `TODO_SETUP.md`, `project.md`
-- [ ] Ajouter les variables d'env sur le Dashboard Vercel (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+- [x] Ajouter les variables d'env sur le Dashboard Vercel (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
 - [ ] Configurer les variables Azure OAuth dans Supabase Dashboard (prod)
 
 ---
