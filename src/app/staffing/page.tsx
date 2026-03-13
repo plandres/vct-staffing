@@ -29,12 +29,16 @@ export default function StaffingPage() {
               funds={staffingData.funds}
               programs={staffingData.programs}
               members={staffingData.members}
+              companies={staffingData.companies}
+              assignments={staffingData.assignments}
               selectedFund={selectedFund}
               selectedProgram={selectedProgram}
               selectedMember={selectedMember}
               onFundChange={setSelectedFund}
               onProgramChange={setSelectedProgram}
               onMemberChange={setSelectedMember}
+              upsertAssignment={staffingData.upsertAssignment}
+              refetch={staffingData.refetch}
             />
             <div className="flex-1 overflow-auto">
               <StaffingMatrix
