@@ -25,6 +25,8 @@
 
 ### À faire
 
+- [ ] **Exécuter `supabase/full_setup.sql`** sur la DB de prod (nécessite la connection string DB — la récupérer dans Supabase > Settings > Database > Connection string > URI, puis exécuter via `psql`)
+- [ ] **Exécuter `bootstrap_admin`** après la première inscription (`SELECT public.bootstrap_admin('email@seven2.com');`)
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [ ] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
