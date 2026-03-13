@@ -25,8 +25,8 @@
 
 ### À faire
 
-- [ ] **⚠️ PRIORITÉ #1 — Exécuter les migrations sur la DB de prod** — Le fichier `supabase/full_setup.sql` (686 lignes, 9 tables, RLS, seed data) doit être exécuté sur la DB. Méthode : utiliser le Supabase MCP Server ou, si MCP indisponible, demander la `SUPABASE_SERVICE_ROLE_KEY` à l'utilisateur et exécuter via `curl` sur l'API REST Supabase (`/rest/v1/rpc` ou `/pg`). **Ne jamais demander à l'utilisateur de copier-coller le SQL manuellement.**
-- [ ] **⚠️ PRIORITÉ #2 — Exécuter `bootstrap_admin()`** après la première inscription utilisateur — via MCP SQL ou API REST avec service_role key
+- [x] **Migrations exécutées sur la DB de prod** — 9 tables, 10 fonctions, 27 policies RLS, 22 index, 7 triggers, seed data (3 fonds, 16 programmes) — via MCP Supabase
+- [x] **`bootstrap_admin()` exécuté** — paul-louis.andres@seven2.eu promu owner
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [x] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
