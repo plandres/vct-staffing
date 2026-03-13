@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { Building2, Users, FolderKanban, Activity } from "lucide-react";
 import type {
   StaffingAssignment,
@@ -15,44 +16,45 @@ interface StatsCardsProps {
   programs: ProgramCategory[];
 }
 
-export function StatsCards({
+export const StatsCards = memo(function StatsCards({
   assignments,
   companies,
   members,
 }: StatsCardsProps) {
-  const activeCompanies = companies.filter((c) => c.status === "active");
-  const activeAssignments = assignments.filter((a) => a.workload !== "none");
-  const heavyCount = assignments.filter((a) => a.workload === "heavy").length;
-  const ongoingPrograms = assignments.filter(
-    (a) => a.status === "ongoing"
-  ).length;
+  const stats = useMemo(() => {
+    const activeCompanies = companies.filter((c) => c.status === "active");
+    const activeAssignments = assignments.filter((a) => a.workload !== "none");
+    const heavyCount = assignments.filter((a) => a.workload === "heavy").length;
+    const ongoingPrograms = assignments.filter((a) => a.status === "ongoing").length;
+    const toStartCount = assignments.filter((a) => a.status === "to_start").length;
 
-  const stats = [
-    {
-      label: "Active Companies",
-      value: activeCompanies.length,
-      icon: Building2,
-      detail: `${companies.length} total`,
-    },
-    {
-      label: "VCT Members",
-      value: members.length,
-      icon: Users,
-      detail: `${heavyCount} heavy assignments`,
-    },
-    {
-      label: "Active Assignments",
-      value: activeAssignments.length,
-      icon: Activity,
-      detail: `${heavyCount} heavy, ${activeAssignments.length - heavyCount} light`,
-    },
-    {
-      label: "Ongoing Programs",
-      value: ongoingPrograms,
-      icon: FolderKanban,
-      detail: `${assignments.filter((a) => a.status === "to_start").length} to start`,
-    },
-  ];
+    return [
+      {
+        label: "Active Companies",
+        value: activeCompanies.length,
+        icon: Building2,
+        detail: `${companies.length} total`,
+      },
+      {
+        label: "VCT Members",
+        value: members.length,
+        icon: Users,
+        detail: `${heavyCount} heavy assignments`,
+      },
+      {
+        label: "Active Assignments",
+        value: activeAssignments.length,
+        icon: Activity,
+        detail: `${heavyCount} heavy, ${activeAssignments.length - heavyCount} light`,
+      },
+      {
+        label: "Ongoing Programs",
+        value: ongoingPrograms,
+        icon: FolderKanban,
+        detail: `${toStartCount} to start`,
+      },
+    ];
+  }, [assignments, companies, members]);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -71,4 +73,4 @@ export function StatsCards({
       ))}
     </div>
   );
-}
+});

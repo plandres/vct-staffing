@@ -6,8 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { AuthGuard } from "@/components/layout/AuthGuard";
 import { useToast } from "@/components/ui/Toast";
 import { createBrowserClient } from "@/lib/supabase/client";
-import type { Fund, ProgramCategory, PortfolioCompany, CompanyStatus } from "@/types/database";
-import { Plus, Trash2, GripVertical, Pencil, Check, X, Building2 } from "lucide-react";
+import type { Fund, ProgramCategory, PortfolioCompany, CompanyStatus, AppSetting } from "@/types/database";
+import { Plus, Trash2, GripVertical, Pencil, Check, X, Building2, ShieldCheck } from "lucide-react";
 
 function useDragReorder<T extends { id: string }>(
   items: T[],
@@ -64,6 +64,9 @@ export default function AdminConfigPage() {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [programs, setPrograms] = useState<ProgramCategory[]>([]);
   const [companies, setCompanies] = useState<PortfolioCompany[]>([]);
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [editingDomain, setEditingDomain] = useState(false);
+  const [domainValue, setDomainValue] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Funds
@@ -85,20 +88,43 @@ export default function AdminConfigPage() {
 
   const fetchConfig = useCallback(async () => {
     setLoading(true);
-    const [fundsRes, programsRes, companiesRes] = await Promise.all([
+    const [fundsRes, programsRes, companiesRes, settingsRes] = await Promise.all([
       supabase.from("funds").select("*").order("display_order"),
       supabase.from("program_categories").select("*").order("display_order"),
       supabase.from("portfolio_companies").select("*").order("name"),
+      supabase.from("app_settings").select("*"),
     ]);
     if (fundsRes.data) setFunds(fundsRes.data as Fund[]);
     if (programsRes.data) setPrograms(programsRes.data as ProgramCategory[]);
     if (companiesRes.data) setCompanies(companiesRes.data as PortfolioCompany[]);
+    if (settingsRes.data) {
+      const map: Record<string, string> = {};
+      (settingsRes.data as AppSetting[]).forEach((s) => { map[s.key] = s.value; });
+      setSettings(map);
+    }
     setLoading(false);
   }, [supabase]);
 
   useEffect(() => {
     fetchConfig();
   }, [fetchConfig]);
+
+  // --- App settings ---
+  const handleSaveDomain = async () => {
+    const trimmed = domainValue.trim().replace(/^@/, "");
+    if (!trimmed) return;
+    const { error } = await supabase
+      .from("app_settings")
+      .update({ value: trimmed })
+      .eq("key", "allowed_email_domain");
+    if (!error) {
+      setSettings((prev) => ({ ...prev, allowed_email_domain: trimmed }));
+      toast("Domaine mis à jour");
+    } else {
+      toast("Erreur lors de la mise à jour", "error");
+    }
+    setEditingDomain(false);
+  };
 
   // --- Reorder handlers ---
   const saveOrder = async (table: string, items: { id: string }[]) => {
@@ -316,6 +342,63 @@ export default function AdminConfigPage() {
                 </div>
               ) : (
                 <>
+                  {/* Security settings */}
+                  <div className="bg-white border rounded-lg p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ShieldCheck className="h-5 w-5 text-gray-400" />
+                      <h2 className="text-lg font-semibold">Accès & Sécurité</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {/* Allowed email domain */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">
+                          Domaine email autorisé
+                        </label>
+                        <p className="text-xs text-gray-500 mb-2">
+                          Seules les adresses email de ce domaine pourront créer un compte.
+                        </p>
+                        {editingDomain ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">@</span>
+                            <input
+                              autoFocus
+                              type="text"
+                              value={domainValue}
+                              onChange={(e) => setDomainValue(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") handleSaveDomain();
+                                if (e.key === "Escape") setEditingDomain(false);
+                              }}
+                              className="px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                              placeholder="seven2.eu"
+                            />
+                            <button onClick={handleSaveDomain} className="p-1.5 text-green-600 hover:text-green-700">
+                              <Check className="h-4 w-4" />
+                            </button>
+                            <button onClick={() => setEditingDomain(false)} className="p-1.5 text-gray-400 hover:text-gray-600">
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1.5 bg-gray-50 border rounded-lg text-sm font-mono">
+                              @{settings.allowed_email_domain ?? "—"}
+                            </span>
+                            <button
+                              onClick={() => {
+                                setDomainValue(settings.allowed_email_domain ?? "");
+                                setEditingDomain(true);
+                              }}
+                              className="p-1.5 text-gray-400 hover:text-gray-600"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Funds */}
                   <div className="bg-white border rounded-lg p-6">
                     <h2 className="text-lg font-semibold mb-4">Fonds</h2>

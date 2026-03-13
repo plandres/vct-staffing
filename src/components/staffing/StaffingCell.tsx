@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState, useMemo } from "react";
 import type {
   StaffingAssignment,
   ProgramCategory,
@@ -25,7 +25,7 @@ interface StaffingCellProps {
   onDelete: (id: string) => Promise<void>;
 }
 
-export function StaffingCell({
+export const StaffingCell = memo(function StaffingCell({
   assignments,
   memberId,
   companyId,
@@ -43,22 +43,25 @@ export function StaffingCell({
     external_resources: "",
   });
 
-  // Determine dominant workload for cell color
-  const dominantWorkload: WorkloadLevel =
-    assignments.length === 0
-      ? "none"
-      : assignments.some((a) => a.workload === "heavy")
-        ? "heavy"
-        : assignments.filter((a) => a.workload === "light").length > 1
-          ? "heavy" // Multiple Light = effective Heavy
-          : "light";
+  const { dominantWorkload, programNames } = useMemo(() => {
+    const dominant: WorkloadLevel =
+      assignments.length === 0
+        ? "none"
+        : assignments.some((a) => a.workload === "heavy")
+          ? "heavy"
+          : assignments.filter((a) => a.workload === "light").length > 1
+            ? "heavy" // Multiple Light = effective Heavy
+            : "light";
 
-  const programNames = assignments
-    .map((a) => {
-      const prog = programs.find((p) => p.id === a.program_id);
-      return prog?.name ?? "?";
-    })
-    .join(", ");
+    const names = assignments
+      .map((a) => {
+        const prog = programs.find((p) => p.id === a.program_id);
+        return prog?.name ?? "?";
+      })
+      .join(", ");
+
+    return { dominantWorkload: dominant, programNames: names };
+  }, [assignments, programs]);
 
   const handleAdd = async () => {
     if (!editForm.program_id) return;
@@ -245,4 +248,4 @@ export function StaffingCell({
       )}
     </td>
   );
-}
+});

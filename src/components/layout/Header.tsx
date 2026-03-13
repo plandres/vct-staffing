@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { useAuthActions } from "@/lib/context/AuthContext";
 import { SearchBar } from "@/components/layout/SearchBar";
 
 interface HeaderProps {
@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export function Header({ title, description, actions }: HeaderProps) {
-  const { signOut } = useAuth();
+  const { signOut } = useAuthActions();
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-border px-6">

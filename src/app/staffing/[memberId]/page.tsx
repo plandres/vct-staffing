@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
@@ -10,16 +10,12 @@ import { WorkloadBadge } from "@/components/staffing/WorkloadBadge";
 import type { Profile, StaffingAssignment, PortfolioCompany, ProgramCategory, Fund } from "@/types/database";
 import { User, Briefcase, Building2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const MemberWorkloadChart = dynamic(
+  () => import("@/components/staffing/MemberWorkloadChart").then((m) => m.MemberWorkloadChart),
+  { ssr: false }
+);
 import { WORKLOAD_COLORS } from "@/lib/utils/colors";
 
 export default function MemberDetailPage() {
@@ -33,7 +29,8 @@ export default function MemberDetailPage() {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const supabase = createBrowserClient();
+  const supabaseRef = useRef(createBrowserClient());
+  const supabase = supabaseRef.current;
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -71,10 +68,12 @@ export default function MemberDetailPage() {
   );
 
   // Stats
-  const heavyCount = assignments.filter((a) => a.workload === "heavy").length;
-  const lightCount = assignments.filter((a) => a.workload === "light").length;
-  const uniqueCompanies = new Set(assignments.map((a) => a.company_id)).size;
-  const uniquePrograms = new Set(assignments.map((a) => a.program_id)).size;
+  const { heavyCount, lightCount, uniqueCompanies, uniquePrograms } = useMemo(() => ({
+    heavyCount: assignments.filter((a) => a.workload === "heavy").length,
+    lightCount: assignments.filter((a) => a.workload === "light").length,
+    uniqueCompanies: new Set(assignments.map((a) => a.company_id)).size,
+    uniquePrograms: new Set(assignments.map((a) => a.program_id)).size,
+  }), [assignments]);
 
   // Chart data: assignments by company
   const chartData = useMemo(() => {
@@ -246,23 +245,7 @@ export default function MemberDetailPage() {
                   <h3 className="text-sm font-semibold text-gray-700 mb-4">
                     Charge par société
                   </h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} layout="vertical" margin={{ left: 80 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                        <XAxis type="number" allowDecimals={false} />
-                        <YAxis
-                          type="category"
-                          dataKey="name"
-                          width={75}
-                          tick={{ fontSize: 11 }}
-                        />
-                        <Tooltip />
-                        <Bar dataKey="heavy" stackId="a" fill={WORKLOAD_COLORS.heavy.bg} name="Heavy" radius={[0, 0, 0, 0]} />
-                        <Bar dataKey="light" stackId="a" fill={WORKLOAD_COLORS.light.bg} name="Light" radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <MemberWorkloadChart data={chartData} />
                 </div>
               )}
 

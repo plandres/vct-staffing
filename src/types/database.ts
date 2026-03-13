@@ -2,6 +2,7 @@
 // Run `npm run db:gen-types` to regenerate from live DB
 
 export type UserRole = "owner" | "admin" | "core_vct" | "sop" | "requester" | "viewer";
+export type UserStatus = "pending" | "approved" | "rejected";
 export type WorkloadLevel = "heavy" | "light" | "none";
 export type AssignmentStatus = "to_start" | "ongoing" | "completed" | "roadblock";
 export type CompanyStatus = "active" | "inactive" | "exited";
@@ -17,11 +18,18 @@ export interface Profile {
   full_name: string;
   initials: string | null;
   role: UserRole;
+  status: UserStatus;
   specialties: string[];
   avatar_url: string | null;
   phone: string | null;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
+}
+
+export interface AppSetting {
+  key: string;
+  value: string;
   updated_at: string;
 }
 
@@ -160,6 +168,7 @@ export interface Database {
           full_name: string;
           initials?: string | null;
           role?: UserRole;
+          status?: UserStatus;
           specialties?: string[];
           avatar_url?: string | null;
           phone?: string | null;
@@ -173,6 +182,7 @@ export interface Database {
           full_name?: string;
           initials?: string | null;
           role?: UserRole;
+          status?: UserStatus;
           specialties?: string[];
           avatar_url?: string | null;
           phone?: string | null;
@@ -180,6 +190,12 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
+      };
+      app_settings: {
+        Row: AppSetting;
+        Insert: { key: string; value: string; updated_at?: string };
+        Update: { key?: string; value?: string; updated_at?: string };
         Relationships: [];
       };
       funds: {

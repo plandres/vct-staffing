@@ -30,20 +30,6 @@ function LoginForm() {
     }
   }, [searchParams]);
 
-  const handleSignInWithMicrosoft = async () => {
-    setError(null);
-    const { error: err } = await supabase.auth.signInWithOAuth({
-      provider: "azure",
-      options: {
-        scopes: "email profile",
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (err) {
-      setError(err.message);
-    }
-  };
-
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
@@ -85,19 +71,18 @@ function LoginForm() {
         },
       });
       if (err) {
-        setError(err.message);
-      } else {
-        // Try to sign in immediately after signup
-        const { error: signInErr } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (signInErr) {
-          setInfo("Compte cree. Verifiez votre email ou reconnectez-vous.");
+        if (err.message.includes("email_domain_not_allowed")) {
+          const domain = err.message.match(/only @(\S+) addresses/)?.[1] ?? "seven2.eu";
+          setError(`Seules les adresses @${domain} sont autorisées pour accéder à cette application.`);
         } else {
-          router.replace("/dashboard");
-          return;
+          setError(err.message);
         }
+      } else {
+        setMode("login");
+        setPassword("");
+        setInfo(
+          "Compte créé. Vérifiez votre email pour confirmer votre adresse, puis attendez la validation de votre accès par un administrateur."
+        );
       }
     } else {
       const { error: err } = await supabase.auth.signInWithPassword({
@@ -180,30 +165,6 @@ function LoginForm() {
         </>
       ) : (
         <>
-          {/* Microsoft SSO */}
-          <button
-            onClick={handleSignInWithMicrosoft}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 21 21" fill="none">
-              <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-              <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-              <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-              <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-            </svg>
-            Sign in with Microsoft
-          </button>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-background px-2 text-muted-foreground">ou</span>
-            </div>
-          </div>
-
           {/* Email/Password form */}
           <form onSubmit={handleEmailAuth} className="space-y-3">
             <div>

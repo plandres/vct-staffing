@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { AuthGuard } from "@/components/layout/AuthGuard";
@@ -18,7 +18,8 @@ export default function RequestsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const { user, profile } = useAuth();
-  const supabase = createBrowserClient();
+  const supabaseRef = useRef(createBrowserClient());
+  const supabase = supabaseRef.current;
 
   const fetchRequests = useCallback(async () => {
     setLoading(true);

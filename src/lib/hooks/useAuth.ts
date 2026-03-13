@@ -3,13 +3,17 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile, UserRole } from "@/types/database";
+import type { Profile, UserRole, UserStatus } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 
-interface AuthState {
+// Re-export useAuth from context so all existing imports keep working
+export { useAuth } from "@/lib/context/AuthContext";
+
+interface AuthStateInternal {
   user: User | null;
   profile: Profile | null;
   role: UserRole;
+  status: UserStatus;
   isLoading: boolean;
   sopCompanyIds: string[];
 }
@@ -21,11 +25,16 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function useAuth() {
-  const [state, setState] = useState<AuthState>({
+/**
+ * useAuthState — internal hook that owns the auth state.
+ * Called ONCE in AuthProvider (Providers.tsx). Do not call it elsewhere.
+ */
+export function useAuthState() {
+  const [state, setState] = useState<AuthStateInternal>({
     user: null,
     profile: null,
     role: "viewer",
+    status: "pending",
     isLoading: true,
     sopCompanyIds: [],
   });
@@ -36,7 +45,6 @@ export function useAuth() {
 
   const fetchProfile = useCallback(
     async (userId: string): Promise<{ profile: Profile | null; sopCompanyIds: string[] }> => {
-      // Retry logic to handle race condition with profile trigger
       let profile: Profile | null = null;
       for (let attempt = 0; attempt < MAX_PROFILE_RETRIES; attempt++) {
         const { data, error } = await supabase
@@ -50,7 +58,6 @@ export function useAuth() {
           break;
         }
 
-        // Profile not found yet (trigger may not have fired) - wait and retry
         if (attempt < MAX_PROFILE_RETRIES - 1) {
           await sleep(RETRY_DELAY_MS * (attempt + 1));
         }
@@ -74,23 +81,29 @@ export function useAuth() {
     let mounted = true;
 
     const getInitialSession = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const user = session?.user ?? null;
 
-      if (user && mounted) {
-        const { profile, sopCompanyIds } = await fetchProfile(user.id);
-        if (mounted) {
-          setState({
-            user,
-            profile,
-            role: (profile?.role as UserRole) ?? "viewer",
-            isLoading: false,
-            sopCompanyIds,
-          });
+        if (user && mounted) {
+          const { profile, sopCompanyIds } = await fetchProfile(user.id);
+          if (mounted) {
+            setState({
+              user,
+              profile,
+              role: (profile?.role as UserRole) ?? "viewer",
+              status: (profile?.status as UserStatus) ?? "pending",
+              isLoading: false,
+              sopCompanyIds,
+            });
+          }
+        } else if (mounted) {
+          setState((s) => ({ ...s, isLoading: false }));
         }
-      } else if (mounted) {
-        setState((s) => ({ ...s, isLoading: false }));
+      } catch {
+        if (mounted) setState((s) => ({ ...s, isLoading: false }));
       }
     };
 
@@ -106,6 +119,7 @@ export function useAuth() {
             user: session.user,
             profile,
             role: (profile?.role as UserRole) ?? "viewer",
+            status: (profile?.status as UserStatus) ?? "pending",
             isLoading: false,
             sopCompanyIds,
           });
@@ -116,18 +130,17 @@ export function useAuth() {
             user: null,
             profile: null,
             role: "viewer",
+            status: "pending",
             isLoading: false,
             sopCompanyIds: [],
           });
           router.replace("/login");
         }
       } else if (event === "PASSWORD_RECOVERY") {
-        // User clicked password reset link - redirect to reset page
         if (mounted) {
           router.replace("/login/reset-password");
         }
       } else if (event === "TOKEN_REFRESHED" && session?.user && mounted) {
-        // Session refreshed, update user reference
         setState((s) => ({ ...s, user: session.user }));
       }
     });
@@ -150,12 +163,7 @@ export function useAuth() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    // The onAuthStateChange handler will redirect to /login
   };
 
-  return {
-    ...state,
-    signInWithMicrosoft,
-    signOut,
-  };
+  return { ...state, signInWithMicrosoft, signOut };
 }

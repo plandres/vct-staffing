@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #6)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #11)
 
 ---
 
@@ -17,8 +17,10 @@
 - [x] Seed data : 3 fonds, 26 sociétés, 16 catégories de programmes
 - [x] 3 clients Supabase (client, server, middleware) avec placeholder fallbacks
 - [x] Auth middleware SSR avec `getUser()` + routing public/privé
+- [x] `useAuth` optimisé : `getSession()` au lieu de `getUser()` pour le chargement initial (perf)
 - [x] Auth flow : Microsoft OAuth (Azure) + email/password + reset password + callback
 - [x] Realtime : subscription sur `staffing_assignments`
+- [x] Fix re-render infini dans `useStaffing` / `useCompanies` (dépendances `useCallback` stabilisées)
 - [x] Types TypeScript complets (`src/types/database.ts`)
 - [x] `config.toml` local avec Azure OAuth, Studio, Realtime
 - [x] `.env.local` avec credentials dev
@@ -26,12 +28,15 @@
 ### À faire
 
 - [x] **Migrations exécutées sur la DB de prod** — 9 tables, 10 fonctions, 27 policies RLS, 22 index, 7 triggers, seed data (3 fonds, 16 programmes) — via MCP Supabase
+- [x] Migration 008 : policies RLS granulaires sur `funds` et `program_categories` (INSERT/UPDATE/DELETE séparés avec `WITH CHECK`)
 - [x] **`bootstrap_admin()` exécuté** — paul-louis.andres@seven2.eu promu owner
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [x] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
 - [ ] Créer des templates email personnalisés (branding Seven2)
-- [ ] Étendre l'activity logging au-delà de `staffing_assignments` (companies, profiles, etc.)
+- [x] Étendre l'activity logging au-delà de `staffing_assignments` : triggers sur `portfolio_companies`, `profiles`, `support_requests` (migration 009)
+- [x] Migration 010 : `ALTER PUBLICATION supabase_realtime ADD TABLE staffing_assignments` (Postgres Changes sans erreur)
+- [x] Migration 011 : table `app_settings` (domaine email configurable), colonne `status` sur `profiles` (pending/approved/rejected), trigger `handle_new_user` mis à jour (vérification domaine + compte pending/inactive), policy `profiles_select` corrigée (lecture du propre profil même en pending)
 - [ ] Automatiser la sync des types (`database.ts` actuellement manuel → risque de drift)
 - [ ] Configurer l'URL de callback OAuth en production (actuellement `localhost:3000`)
 - [ ] Ajouter du rate limiting sur les endpoints auth
@@ -86,7 +91,9 @@
 ### À faire
 
 - [x] Opérations en masse (bulk import/export d'assignments) — `BulkExport` + `BulkImport` CSV dans la barre de filtres
-- [ ] Tests automatisés (unitaires, intégration)
+- [x] Tests automatisés : Vitest + React Testing Library configurés, 49 tests unitaires (utils roles, colors)
+- [x] Flux d'approbation utilisateur : écrans pending/rejected dans `AuthGuard`, section approbations dans Admin > Utilisateurs (boutons Approuver/Rejeter), section "Accès & Sécurité" dans Admin > Config (domaine email autorisé)
+- [x] Login : suppression de l'auto-connexion après inscription, message clair sur vérification email + approbation admin, affichage de l'erreur de domaine depuis le trigger Supabase
 
 ---
 
