@@ -13,6 +13,7 @@ import {
   Upload,
   Users,
   Pencil,
+  Plug,
 } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { hasMinRole } from "@/lib/utils/roles";
@@ -30,6 +31,7 @@ const ADMIN_ITEMS = [
   { href: "/admin/users", label: "Users", icon: Users, minRole: "admin" as const },
   { href: "/admin/import", label: "Import RDQM", icon: Upload, minRole: "admin" as const },
   { href: "/admin/config", label: "Config", icon: Settings, minRole: "admin" as const },
+  { href: "/admin/mcp", label: "MCP Server", icon: Plug, minRole: "admin" as const },
 ];
 
 export function Sidebar() {
