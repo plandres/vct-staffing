@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type {
   StaffingAssignment,
@@ -29,7 +29,8 @@ export function useStaffing(fundFilter?: string) {
     isLoading: true,
   });
 
-  const supabase = createClient();
+  const supabaseRef = useRef(createClient());
+  const supabase = supabaseRef.current;
 
   const fetchData = useCallback(async () => {
     const [assignmentsRes, membersRes, companiesRes, programsRes, fundsRes] =

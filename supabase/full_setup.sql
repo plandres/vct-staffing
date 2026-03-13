@@ -267,8 +267,16 @@ CREATE POLICY "funds_select" ON public.funds
   FOR SELECT TO authenticated
   USING (is_authenticated_active());
 
-CREATE POLICY "funds_modify" ON public.funds
-  FOR ALL TO authenticated
+CREATE POLICY "funds_insert" ON public.funds
+  FOR INSERT TO authenticated
+  WITH CHECK (is_admin_or_owner());
+
+CREATE POLICY "funds_update" ON public.funds
+  FOR UPDATE TO authenticated
+  USING (is_admin_or_owner());
+
+CREATE POLICY "funds_delete" ON public.funds
+  FOR DELETE TO authenticated
   USING (is_admin_or_owner());
 
 -- ============================================================
@@ -302,8 +310,16 @@ CREATE POLICY "programs_select" ON public.program_categories
   FOR SELECT TO authenticated
   USING (is_authenticated_active());
 
-CREATE POLICY "programs_modify" ON public.program_categories
-  FOR ALL TO authenticated
+CREATE POLICY "programs_insert" ON public.program_categories
+  FOR INSERT TO authenticated
+  WITH CHECK (is_admin_or_owner());
+
+CREATE POLICY "programs_update" ON public.program_categories
+  FOR UPDATE TO authenticated
+  USING (is_admin_or_owner());
+
+CREATE POLICY "programs_delete" ON public.program_categories
+  FOR DELETE TO authenticated
   USING (is_admin_or_owner());
 
 -- ============================================================
