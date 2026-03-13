@@ -67,3 +67,8 @@ Required in `.env.local` (local) and Vercel (production):
 - `AuthGuard` component wraps protected pages
 - Path alias: `@/*` maps to `./src/*`
 - Supabase migrations live in `supabase/migrations/`
+
+## Project Tracking
+
+- **`project.md`** contient l'état d'avancement du projet (Supabase, Vercel, App, Parser) sous forme de checklists.
+- **À chaque PR**, mettre à jour `project.md` : cocher les éléments terminés, ajouter les nouveaux éléments à faire si besoin, et mettre à jour la date en haut du fichier.
