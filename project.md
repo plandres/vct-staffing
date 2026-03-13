@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #2)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #3)
 
 ---
 
@@ -25,8 +25,8 @@
 
 ### À faire
 
-- [ ] **Exécuter les migrations sur la DB de prod** — Demander à l'utilisateur sa `SUPABASE_SERVICE_ROLE_KEY` (déjà fournie par le passé, ne pas la stocker dans le repo) puis exécuter `supabase/full_setup.sql` via `psql` ou l'API Supabase. Ne jamais demander à l'utilisateur de le faire manuellement.
-- [ ] **Exécuter `bootstrap_admin`** après la première inscription — même méthode (via `psql` ou API avec la service_role key)
+- [ ] **Exécuter les migrations sur la DB de prod** — Utiliser le **Supabase MCP Server** (`https://mcp.supabase.com/mcp?project_ref=nshsmbzhrhfjauayzjgy`) pour exécuter `supabase/full_setup.sql`. Nécessite la config MCP dans les settings Claude Code (voir `CLAUDE.md`). Ne jamais demander à l'utilisateur de le faire manuellement.
+- [ ] **Exécuter `bootstrap_admin`** après la première inscription — via MCP SQL
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [ ] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
