@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { PortfolioCompany, Fund } from "@/types/database";
 
@@ -39,10 +39,14 @@ export function useCompanies() {
     await fetchCompanies();
   };
 
-  const companiesByFund = funds.map((fund) => ({
-    fund,
-    companies: companies.filter((c) => c.fund_id === fund.id),
-  }));
+  const companiesByFund = useMemo(
+    () =>
+      funds.map((fund) => ({
+        fund,
+        companies: companies.filter((c) => c.fund_id === fund.id),
+      })),
+    [funds, companies]
+  );
 
   return {
     companies,

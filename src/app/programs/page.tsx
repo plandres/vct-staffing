@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { AuthGuard } from "@/components/layout/AuthGuard";
@@ -23,7 +23,8 @@ export default function ProgramsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
 
-  const supabase = createBrowserClient();
+  const supabaseRef = useRef(createBrowserClient());
+  const supabase = supabaseRef.current;
 
   const fetchData = useCallback(async () => {
     setLoading(true);

@@ -35,27 +35,32 @@ export function useStaffing(fundFilter?: string) {
   const fetchData = useCallback(async () => {
     const [assignmentsRes, membersRes, companiesRes, programsRes, fundsRes] =
       await Promise.all([
-        supabase.from("staffing_assignments").select("*"),
+        supabase
+          .from("staffing_assignments")
+          .select("id, member_id, company_id, program_id, workload, status, objectives, external_resources"),
         supabase
           .from("profiles")
-          .select("*")
+          .select("id, full_name, initials, email, role, is_active, specialties, phone")
           .eq("is_active", true)
           .in("role", ["owner", "admin", "core_vct", "sop"]),
         fundFilter
           ? supabase
               .from("portfolio_companies")
-              .select("*")
+              .select("id, name, fund_id, sector, status, strategic_priorities, kpis")
               .eq("fund_id", fundFilter)
               .order("name")
           : supabase
               .from("portfolio_companies")
-              .select("*")
+              .select("id, name, fund_id, sector, status, strategic_priorities, kpis")
               .order("name"),
         supabase
           .from("program_categories")
-          .select("*")
+          .select("id, name, type, display_order")
           .order("display_order"),
-        supabase.from("funds").select("*").order("display_order"),
+        supabase
+          .from("funds")
+          .select("id, name, display_order")
+          .order("display_order"),
       ]);
 
     setData({
@@ -72,7 +77,14 @@ export function useStaffing(fundFilter?: string) {
     fetchData();
   }, [fetchData]);
 
-  // Realtime subscription for staffing changes
+  // Stable ref so the Realtime callback always calls the latest fetchData
+  // without the subscription needing to be re-created on every filter change.
+  const fetchDataRef = useRef(fetchData);
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  });
+
+  // Realtime subscription for staffing changes — created once, never re-subscribed
   useEffect(() => {
     const channel = supabase
       .channel("staffing-changes")
@@ -80,7 +92,7 @@ export function useStaffing(fundFilter?: string) {
         "postgres_changes",
         { event: "*", schema: "public", table: "staffing_assignments" },
         () => {
-          fetchData();
+          fetchDataRef.current();
         }
       )
       .subscribe();
@@ -88,7 +100,7 @@ export function useStaffing(fundFilter?: string) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, fetchData]);
+  }, [supabase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const upsertAssignment = async (
     assignment: Partial<StaffingAssignment> & {

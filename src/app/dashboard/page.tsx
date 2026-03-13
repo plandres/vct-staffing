@@ -1,15 +1,40 @@
 "use client";
 
+import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { AuthGuard } from "@/components/layout/AuthGuard";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { UtilizationChart } from "@/components/dashboard/UtilizationChart";
 import { useStaffing } from "@/lib/hooks/useStaffing";
+
+const UtilizationChart = dynamic(
+  () => import("@/components/dashboard/UtilizationChart").then((m) => m.UtilizationChart),
+  { ssr: false }
+);
 
 export default function DashboardPage() {
   const { assignments, members, companies, programs, funds, isLoading } =
     useStaffing();
+
+  // Set of company_ids that have at least one non-"none" assignment — O(n) build
+  const coveredCompanyIds = useMemo(
+    () => new Set(assignments.filter((a) => a.workload !== "none").map((a) => a.company_id)),
+    [assignments]
+  );
+
+  // Per-fund coverage stats — O(n companies) per fund
+  const fundCoverage = useMemo(
+    () =>
+      funds.map((fund) => {
+        const fundCompanies = companies.filter(
+          (c) => c.fund_id === fund.id && c.status === "active"
+        );
+        const coveredCount = fundCompanies.filter((c) => coveredCompanyIds.has(c.id)).length;
+        return { fund, total: fundCompanies.length, covered: coveredCount };
+      }),
+    [funds, companies, coveredCompanyIds]
+  );
 
   return (
     <AuthGuard>
@@ -43,42 +68,24 @@ export default function DashboardPage() {
                       Portfolio Coverage
                     </h3>
                     <div className="space-y-2">
-                      {funds.map((fund) => {
-                        const fundCompanies = companies.filter(
-                          (c) => c.fund_id === fund.id && c.status === "active"
-                        );
-                        const covered = fundCompanies.filter((c) =>
-                          assignments.some(
-                            (a) =>
-                              a.company_id === c.id && a.workload !== "none"
-                          )
-                        );
-                        return (
-                          <div key={fund.id}>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span className="font-medium">{fund.name}</span>
-                              <span className="text-muted-foreground">
-                                {covered.length}/{fundCompanies.length}{" "}
-                                companies covered
-                              </span>
-                            </div>
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-primary transition-all"
-                                style={{
-                                  width: `${
-                                    fundCompanies.length > 0
-                                      ? (covered.length /
-                                          fundCompanies.length) *
-                                        100
-                                      : 0
-                                  }%`,
-                                }}
-                              />
-                            </div>
+                      {fundCoverage.map(({ fund, total, covered }) => (
+                        <div key={fund.id}>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="font-medium">{fund.name}</span>
+                            <span className="text-muted-foreground">
+                              {covered}/{total} companies covered
+                            </span>
                           </div>
-                        );
-                      })}
+                          <div className="h-2 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all"
+                              style={{
+                                width: `${total > 0 ? (covered / total) * 100 : 0}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
