@@ -23,19 +23,17 @@ Une fois le projet créé, va dans **Settings > API** (menu gauche) :
 
 > **Garde ces 3 valeurs dans un endroit sûr** — tu en auras besoin pour Vercel.
 
-### 1.3 — Exécuter les migrations (créer les tables)
+### 1.3 — Créer les tables (une seule opération)
 
-Va dans **SQL Editor** (menu gauche de Supabase), puis exécute **chaque fichier** dans l'ordre :
+Va dans **SQL Editor** (menu gauche de Supabase) :
 
-- [ ] Copie-colle et exécute `supabase/migrations/001_initial_schema.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/002_rls_functions.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/003_rls_policies.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/004_indexes.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/005_seed_data.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/006_triggers.sql`
-- [ ] Copie-colle et exécute `supabase/migrations/007_fix_profile_trigger_and_bootstrap.sql`
+- [ ] Ouvre le fichier `supabase/full_setup.sql` dans ton éditeur de texte (ou sur GitHub)
+- [ ] Copie **tout** le contenu du fichier (c'est ~690 lignes)
+- [ ] Colle-le dans le SQL Editor de Supabase
+- [ ] Clique **Run** (le bouton vert en bas à droite)
+- [ ] Vérifie que le message dit "Success" (pas d'erreur en rouge)
 
-> **Important** : exécute-les dans l'ordre (001, 002, 003...). Si un script échoue, ne passe pas au suivant.
+> Ce fichier contient tout d'un bloc : les 9 tables, la sécurité, les index, les données initiales (3 fonds, 26 sociétés, 16 programmes), et les automatismes. Un seul copier-coller suffit.
 
 ### 1.4 — Créer le premier admin
 
