@@ -81,10 +81,13 @@ export function useAuthState() {
     let mounted = true;
 
     const getInitialSession = async () => {
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("auth_timeout")), 8000)
+      );
       try {
         const {
           data: { session },
-        } = await supabase.auth.getSession();
+        } = await Promise.race([supabase.auth.getSession(), timeout]);
         const user = session?.user ?? null;
 
         if (user && mounted) {
