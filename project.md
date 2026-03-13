@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #7)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #8)
 
 ---
 
@@ -34,7 +34,7 @@
 - [x] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
 - [ ] Créer des templates email personnalisés (branding Seven2)
-- [ ] Étendre l'activity logging au-delà de `staffing_assignments` (companies, profiles, etc.)
+- [x] Étendre l'activity logging au-delà de `staffing_assignments` : triggers sur `companies`, `profiles`, `requests` (migration 009)
 - [ ] Automatiser la sync des types (`database.ts` actuellement manuel → risque de drift)
 - [ ] Configurer l'URL de callback OAuth en production (actuellement `localhost:3000`)
 - [ ] Ajouter du rate limiting sur les endpoints auth
@@ -89,7 +89,7 @@
 ### À faire
 
 - [x] Opérations en masse (bulk import/export d'assignments) — `BulkExport` + `BulkImport` CSV dans la barre de filtres
-- [ ] Tests automatisés (unitaires, intégration)
+- [x] Tests automatisés : Vitest + React Testing Library configurés, 49 tests unitaires (utils roles, colors)
 
 ---
 

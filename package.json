@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:gen-types": "npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts"
+    "db:gen-types": "npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -25,14 +27,20 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",
     "eslint-config-next": "^15.1.0",
+    "jsdom": "^28.1.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.0"
   }
 }
