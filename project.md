@@ -94,6 +94,7 @@
 - [x] Tests automatisés : Vitest + React Testing Library configurés, 49 tests unitaires (utils roles, colors)
 - [x] Flux d'approbation utilisateur : écrans pending/rejected dans `AuthGuard`, section approbations dans Admin > Utilisateurs (boutons Approuver/Rejeter), section "Accès & Sécurité" dans Admin > Config (domaine email autorisé)
 - [x] Login : suppression de l'auto-connexion après inscription, message clair sur vérification email + approbation admin, affichage de l'erreur de domaine depuis le trigger Supabase
+- [x] **MCP Server** : `src/app/api/[transport]/route.ts` — serveur MCP intégré à l'app Next.js (déployé sur Vercel), 25 outils admin couvrant utilisateurs, sociétés, fonds, programmes, staffing, demandes, SOP, activity log, paramètres. Protégé par `MCP_API_KEY`. Utilise Supabase service role key via `src/lib/supabase/admin.ts`.
 
 ---
 
