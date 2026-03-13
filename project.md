@@ -25,8 +25,8 @@
 
 ### À faire
 
-- [ ] **Exécuter `supabase/full_setup.sql`** sur la DB de prod (nécessite la connection string DB — la récupérer dans Supabase > Settings > Database > Connection string > URI, puis exécuter via `psql`)
-- [ ] **Exécuter `bootstrap_admin`** après la première inscription (`SELECT public.bootstrap_admin('email@seven2.com');`)
+- [ ] **Exécuter les migrations sur la DB de prod** — Demander à l'utilisateur sa `SUPABASE_SERVICE_ROLE_KEY` (déjà fournie par le passé, ne pas la stocker dans le repo) puis exécuter `supabase/full_setup.sql` via `psql` ou l'API Supabase. Ne jamais demander à l'utilisateur de le faire manuellement.
+- [ ] **Exécuter `bootstrap_admin`** après la première inscription — même méthode (via `psql` ou API avec la service_role key)
 - [ ] Configurer `SUPABASE_SERVICE_ROLE_KEY` (pour opérations admin server-side)
 - [ ] Ajouter `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, `AZURE_TENANT_ID` dans `.env.example`
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)

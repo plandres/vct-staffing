@@ -72,3 +72,11 @@ Required in `.env.local` (local) and Vercel (production):
 
 - **`project.md`** contient l'état d'avancement du projet (Supabase, Vercel, App, Parser) sous forme de checklists.
 - **À chaque PR**, mettre à jour `project.md` : cocher les éléments terminés, ajouter les nouveaux éléments à faire si besoin, et mettre à jour la date en haut du fichier.
+
+## Supabase — Règles d'exécution des migrations
+
+- L'utilisateur possède une `SUPABASE_SERVICE_ROLE_KEY` pour le projet `nshsmbzhrhfjauayzjgy`. **Ne jamais la stocker dans le repo.**
+- Pour exécuter des migrations SQL sur la DB de prod : **demander la service_role key à l'utilisateur**, puis exécuter via `psql` ou l'API Supabase.
+- **Ne jamais demander à l'utilisateur d'exécuter le SQL manuellement** (copier-coller dans le dashboard). C'est à Claude de le faire.
+- Le fichier combiné de setup est `supabase/full_setup.sql`. Les migrations individuelles sont dans `supabase/migrations/`.
+- L'environnement sandbox actuel bloque les connexions sortantes vers `*.supabase.co`. Si ce blocage est levé, utiliser directement `psql` ou `curl` avec la service_role key.
