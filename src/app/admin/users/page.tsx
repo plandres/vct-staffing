@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { AuthGuard } from "@/components/layout/AuthGuard";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/hooks/useAuth";
-import type { Profile } from "@/types/database";
+import type { Profile, UserStatus } from "@/types/database";
 import type { UserRole } from "@/lib/utils/roles";
 import { ROLE_HIERARCHY } from "@/lib/utils/roles";
 import {
@@ -20,6 +20,7 @@ import {
   Check,
   X,
   Search,
+  Clock,
 } from "lucide-react";
 
 const ROLE_META: Record<UserRole, { label: string; icon: typeof Shield; color: string }> = {
@@ -37,6 +38,7 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editRole, setEditRole] = useState<UserRole>("viewer");
+  const [approvingId, setApprovingId] = useState<string | null>(null);
 
   const { profile: currentProfile } = useAuth();
   const supabase = createBrowserClient();
@@ -55,7 +57,10 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [fetchUsers]);
 
-  const filteredProfiles = profiles.filter(
+  const pendingProfiles = profiles.filter((p) => p.status === "pending");
+  const activeProfiles = profiles.filter((p) => p.status !== "pending");
+
+  const filteredProfiles = activeProfiles.filter(
     (p) =>
       p.full_name.toLowerCase().includes(search.toLowerCase()) ||
       p.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -79,6 +84,34 @@ export default function AdminUsersPage() {
       );
     }
     setEditingId(null);
+  };
+
+  const handleApprove = async (profileId: string) => {
+    setApprovingId(profileId);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ status: "approved" as UserStatus, is_active: true })
+      .eq("id", profileId);
+    if (!error) {
+      setProfiles((prev) =>
+        prev.map((p) => (p.id === profileId ? { ...p, status: "approved" as UserStatus, is_active: true } : p))
+      );
+    }
+    setApprovingId(null);
+  };
+
+  const handleReject = async (profileId: string) => {
+    setApprovingId(profileId);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ status: "rejected" as UserStatus, is_active: false })
+      .eq("id", profileId);
+    if (!error) {
+      setProfiles((prev) =>
+        prev.map((p) => (p.id === profileId ? { ...p, status: "rejected" as UserStatus, is_active: false } : p))
+      );
+    }
+    setApprovingId(null);
   };
 
   const handleToggleActive = async (profileId: string, isActive: boolean) => {
@@ -112,6 +145,49 @@ export default function AdminUsersPage() {
           />
           <main className="flex-1 overflow-y-auto p-6">
             <div className="max-w-5xl mx-auto space-y-6">
+              {/* Pending approvals */}
+              {pendingProfiles.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-amber-200">
+                    <Clock className="h-4 w-4 text-amber-600" />
+                    <h2 className="text-sm font-semibold text-amber-800">
+                      Demandes en attente ({pendingProfiles.length})
+                    </h2>
+                  </div>
+                  <div className="divide-y divide-amber-100">
+                    {pendingProfiles.map((profile) => (
+                      <div key={profile.id} className="flex items-center justify-between px-4 py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{profile.full_name}</p>
+                          <p className="text-xs text-gray-500">{profile.email}</p>
+                          <p className="text-xs text-amber-600 mt-0.5">
+                            Inscrit le {new Date(profile.created_at).toLocaleDateString("fr-FR")}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleApprove(profile.id)}
+                            disabled={approvingId === profile.id}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 disabled:opacity-50"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Approuver
+                          </button>
+                          <button
+                            onClick={() => handleReject(profile.id)}
+                            disabled={approvingId === profile.id}
+                            className="flex items-center gap-1.5 px-3 py-1.5 border border-red-200 text-red-600 text-xs font-medium rounded-lg hover:bg-red-50 disabled:opacity-50"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                            Refuser
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />

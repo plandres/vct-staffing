@@ -71,19 +71,18 @@ function LoginForm() {
         },
       });
       if (err) {
-        setError(err.message);
-      } else {
-        // Try to sign in immediately after signup
-        const { error: signInErr } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (signInErr) {
-          setInfo("Compte cree. Verifiez votre email ou reconnectez-vous.");
+        if (err.message.includes("email_domain_not_allowed")) {
+          const domain = err.message.match(/only @(\S+) addresses/)?.[1] ?? "seven2.eu";
+          setError(`Seules les adresses @${domain} sont autorisées pour accéder à cette application.`);
         } else {
-          router.replace("/dashboard");
-          return;
+          setError(err.message);
         }
+      } else {
+        setMode("login");
+        setPassword("");
+        setInfo(
+          "Compte créé. Vérifiez votre email pour confirmer votre adresse, puis attendez la validation de votre accès par un administrateur."
+        );
       }
     } else {
       const { error: err } = await supabase.auth.signInWithPassword({

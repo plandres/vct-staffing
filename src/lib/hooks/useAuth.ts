@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Profile, UserRole } from "@/types/database";
+import type { Profile, UserRole, UserStatus } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 
 // Re-export useAuth from context so all existing imports keep working
@@ -13,6 +13,7 @@ interface AuthStateInternal {
   user: User | null;
   profile: Profile | null;
   role: UserRole;
+  status: UserStatus;
   isLoading: boolean;
   sopCompanyIds: string[];
 }
@@ -33,6 +34,7 @@ export function useAuthState() {
     user: null,
     profile: null,
     role: "viewer",
+    status: "pending",
     isLoading: true,
     sopCompanyIds: [],
   });
@@ -92,6 +94,7 @@ export function useAuthState() {
               user,
               profile,
               role: (profile?.role as UserRole) ?? "viewer",
+              status: (profile?.status as UserStatus) ?? "pending",
               isLoading: false,
               sopCompanyIds,
             });
@@ -116,6 +119,7 @@ export function useAuthState() {
             user: session.user,
             profile,
             role: (profile?.role as UserRole) ?? "viewer",
+            status: (profile?.status as UserStatus) ?? "pending",
             isLoading: false,
             sopCompanyIds,
           });
@@ -126,6 +130,7 @@ export function useAuthState() {
             user: null,
             profile: null,
             role: "viewer",
+            status: "pending",
             isLoading: false,
             sopCompanyIds: [],
           });

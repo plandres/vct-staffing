@@ -1,13 +1,14 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import type { Profile, UserRole } from "@/types/database";
+import type { Profile, UserRole, UserStatus } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 
 interface AuthState {
   user: User | null;
   profile: Profile | null;
   role: UserRole;
+  status: UserStatus;
   isLoading: boolean;
   sopCompanyIds: string[];
   signInWithMicrosoft: () => Promise<void>;
