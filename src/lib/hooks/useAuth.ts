@@ -74,9 +74,12 @@ export function useAuth() {
     let mounted = true;
 
     const getInitialSession = async () => {
+      // Use getSession() (reads from local storage, no network call).
+      // The middleware already validates the JWT server-side on every request.
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession();
+      const user = session?.user ?? null;
 
       if (user && mounted) {
         const { profile, sopCompanyIds } = await fetchProfile(user.id);
