@@ -79,4 +79,4 @@ Required in `.env.local` (local) and Vercel (production):
 - Pour exécuter des migrations SQL sur la DB de prod : **demander la service_role key à l'utilisateur**, puis exécuter via `psql` ou l'API Supabase.
 - **Ne jamais demander à l'utilisateur d'exécuter le SQL manuellement** (copier-coller dans le dashboard). C'est à Claude de le faire.
 - Le fichier combiné de setup est `supabase/full_setup.sql`. Les migrations individuelles sont dans `supabase/migrations/`.
-- L'environnement sandbox actuel bloque les connexions sortantes vers `*.supabase.co`. Si ce blocage est levé, utiliser directement `psql` ou `curl` avec la service_role key.
+- **BLOQUEUR** : L'environnement sandbox actuel bloque les connexions sortantes vers `*.supabase.co` (`403 host_not_allowed`). Les migrations ne peuvent pas être exécutées tant que ce blocage existe. Quand ce blocage est levé, exécuter immédiatement les migrations en attente (voir `project.md` section Supabase > À faire). L'utilisateur ne doit pas avoir à intervenir manuellement pour ça — c'est un point de friction qui peut bloquer le projet plusieurs heures.
