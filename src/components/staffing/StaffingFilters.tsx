@@ -1,32 +1,54 @@
 "use client";
 
-import type { Fund, ProgramCategory, Profile } from "@/types/database";
+import type {
+  Fund,
+  ProgramCategory,
+  Profile,
+  StaffingAssignment,
+  PortfolioCompany,
+} from "@/types/database";
+import { BulkExport } from "./BulkExport";
+import { BulkImport } from "./BulkImport";
 
 interface StaffingFiltersProps {
   funds: Fund[];
   programs: ProgramCategory[];
   members: Profile[];
+  companies: PortfolioCompany[];
+  assignments: StaffingAssignment[];
   selectedFund?: string;
   selectedProgram?: string;
   selectedMember?: string;
   onFundChange: (value: string | undefined) => void;
   onProgramChange: (value: string | undefined) => void;
   onMemberChange: (value: string | undefined) => void;
+  upsertAssignment: (
+    a: Partial<StaffingAssignment> & {
+      member_id: string;
+      company_id: string;
+      program_id: string;
+    }
+  ) => Promise<void>;
+  refetch: () => void;
 }
 
 export function StaffingFilters({
   funds,
   programs,
   members,
+  companies,
+  assignments,
   selectedFund,
   selectedProgram,
   selectedMember,
   onFundChange,
   onProgramChange,
   onMemberChange,
+  upsertAssignment,
+  refetch,
 }: StaffingFiltersProps) {
   return (
-    <div className="flex items-center gap-3 border-b border-border px-6 py-3">
+    <div className="flex items-center gap-3 border-b border-border px-6 py-3 flex-wrap">
       {/* Fund filter */}
       <select
         value={selectedFund ?? ""}
@@ -92,9 +114,29 @@ export function StaffingFilters({
           }}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          Clear filters
+          Effacer filtres
         </button>
       )}
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Bulk actions */}
+      <BulkExport
+        assignments={assignments}
+        members={members}
+        companies={companies}
+        programs={programs}
+        funds={funds}
+      />
+      <BulkImport
+        assignments={assignments}
+        members={members}
+        companies={companies}
+        programs={programs}
+        upsertAssignment={upsertAssignment}
+        onDone={refetch}
+      />
     </div>
   );
 }

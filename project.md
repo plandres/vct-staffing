@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #4)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #5)
 
 ---
 
@@ -84,7 +84,7 @@
 
 ### À faire
 
-- [ ] Opérations en masse (bulk import/export d'assignments)
+- [x] Opérations en masse (bulk import/export d'assignments) — `BulkExport` + `BulkImport` CSV dans la barre de filtres
 - [ ] Tests automatisés (unitaires, intégration)
 
 ---
