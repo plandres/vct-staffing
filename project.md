@@ -1,6 +1,6 @@
 # VCT Staffing — Project Status
 
-> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #9)
+> Ce fichier est mis à jour à chaque PR. Dernière mise à jour : 2026-03-13 (PR #11)
 
 ---
 
@@ -35,6 +35,8 @@
 - [ ] Configurer SMTP custom pour les emails (reset password, invitations)
 - [ ] Créer des templates email personnalisés (branding Seven2)
 - [x] Étendre l'activity logging au-delà de `staffing_assignments` : triggers sur `portfolio_companies`, `profiles`, `support_requests` (migration 009)
+- [x] Migration 010 : `ALTER PUBLICATION supabase_realtime ADD TABLE staffing_assignments` (Postgres Changes sans erreur)
+- [x] Migration 011 : table `app_settings` (domaine email configurable), colonne `status` sur `profiles` (pending/approved/rejected), trigger `handle_new_user` mis à jour (vérification domaine + compte pending/inactive), policy `profiles_select` corrigée (lecture du propre profil même en pending)
 - [ ] Automatiser la sync des types (`database.ts` actuellement manuel → risque de drift)
 - [ ] Configurer l'URL de callback OAuth en production (actuellement `localhost:3000`)
 - [ ] Ajouter du rate limiting sur les endpoints auth
@@ -90,6 +92,8 @@
 
 - [x] Opérations en masse (bulk import/export d'assignments) — `BulkExport` + `BulkImport` CSV dans la barre de filtres
 - [x] Tests automatisés : Vitest + React Testing Library configurés, 49 tests unitaires (utils roles, colors)
+- [x] Flux d'approbation utilisateur : écrans pending/rejected dans `AuthGuard`, section approbations dans Admin > Utilisateurs (boutons Approuver/Rejeter), section "Accès & Sécurité" dans Admin > Config (domaine email autorisé)
+- [x] Login : suppression de l'auto-connexion après inscription, message clair sur vérification email + approbation admin, affichage de l'erreur de domaine depuis le trigger Supabase
 
 ---
 
